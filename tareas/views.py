@@ -1,3 +1,56 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from .models import Tarea
+from .forms import TareaForm
 
-# Create your views here.
+User = get_user_model()
+
+def obtener_usuario_actual(request):
+    """Devuelve el usuario logueado o el primer usuario de la BD para pruebas."""
+    if request.user.is_authenticated:
+        return request.user
+    # Para desarrollo: asigna el primer usuario existente en la BD
+    return User.objects.first()
+
+@login_required
+def lista_tareas(request):
+    usuario = obtener_usuario_actual(request)
+    tareas = Tarea.objects.filter(usuario=usuario).order_by('-fecha_creacion')
+    return render(request, 'tareas/lista.html', {'tareas': tareas})
+
+@login_required
+def crear_tarea(request):
+    usuario = obtener_usuario_actual(request)
+    if request.method == 'POST':
+        form = TareaForm(request.POST)
+        if form.is_valid():
+            tarea = form.save(commit=False)
+            tarea.usuario = usuario  # Asigna la tarea al usuario actual
+            tarea.save()
+            return redirect('lista_tareas')
+    else:
+        form = TareaForm()
+    return render(request, 'tareas/form_tarea.html', {'form': form, 'titulo_pagina': 'Crear Tarea'})
+
+@login_required
+def editar_tarea(request, pk):
+    usuario = obtener_usuario_actual(request)
+    tarea = get_object_or_404(Tarea, pk=pk, usuario=usuario)
+    if request.method == 'POST':
+        form = TareaForm(request.POST, instance=tarea)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_tareas')
+    else:
+        form = TareaForm(instance=tarea)
+    return render(request, 'tareas/form_tarea.html', {'form': form, 'titulo_pagina': 'Editar Tarea'})
+
+@login_required
+def eliminar_tarea(request, pk):
+    usuario = obtener_usuario_actual(request)
+    tarea = get_object_or_404(Tarea, pk=pk, usuario=usuario)
+    if request.method == 'POST':
+        tarea.delete()
+        return redirect('lista_tareas')
+    return render(request, 'tareas/eliminar_confirmar.html', {'tarea': tarea})

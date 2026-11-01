@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ titulo_pagina }}</title>
+  </head>
+  <body>
+    <h1>{{ titulo_pagina }}</h1>
+    <form method="POST">
+      {% csrf_token %}
+      <!-- Protección de seguridad obligatoria en Django -->
+      {{ form.as_p }}
+      <!-- Django dibuja los inputs automáticamente -->
+      <button type="submit">Guardar</button>
+    </form>
+    <a href="{% url 'lista_tareas' %}">Cancelar</a>
+  </body>
+</html>
