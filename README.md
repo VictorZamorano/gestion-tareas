@@ -1,7 +1,7 @@
 # Gestor de tareas
 
 ## Iniciarlizar
-- Haz uso del comando para crear el entorno con python.
+Haz uso del comando para crear el entorno con python.
 
     python -m venv venv
     .\venv\Scripts\Activate.ps1
