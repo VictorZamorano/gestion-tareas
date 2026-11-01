@@ -129,3 +129,5 @@ MAILERS = {
 
 # New settings ------------------------------------------------------
 AUTH_USER_MODEL = 'tareas.Usuario'
+
+LOGIN_URL = '/'
