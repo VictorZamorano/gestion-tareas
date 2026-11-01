@@ -1,5 +1,7 @@
 from django import forms
+
 from .models import Tarea
+
 
 class TareaForm(forms.ModelForm):
     """Formulario para la creación y edición de tareas.
