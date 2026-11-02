@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from tareas.views import vista_pantalla_login, vista_pantalla_registro, vista_pantalla_tareas
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -23,6 +24,10 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('', vista_pantalla_login, name='pantalla_login'),
+    path('registro/', vista_pantalla_registro, name='pantalla_registro'),
+    path('tareas/', vista_pantalla_tareas, name='pantalla_tareas'),
 
     # Endpoints de Autenticación JWT (Login)
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

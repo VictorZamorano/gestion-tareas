@@ -3,6 +3,8 @@ from typing import ClassVar
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from tareas.models import Tarea
+
 User = get_user_model()
 
 class RegistroSerializer(serializers.ModelSerializer):
@@ -30,12 +32,13 @@ class RegistroSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        # El método create_user asegura que la contraseña se guarde mediante HASH (PBKDF2)
+        # Se agrega is_active=True para garantizar que el usuario pueda autenticarse inmediatamente con JWT
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
             password=validated_data['password'],
-            rol=validated_data.get('rol', 'usuario') # Por defecto se crea como usuario común
+            rol=validated_data.get('rol', 'usuario'),
+            is_active=True
         )
         return user
 
@@ -46,3 +49,9 @@ class UsuarioPerfilSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'rol', 'date_joined')
         read_only_fields = ('id', 'date_joined')
+
+class TareaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tarea
+        fields = ['id', 'titulo', 'descripcion', 'completada', 'fecha_creacion', 'fecha_actualizacion']
+        read_only_fields = ['id', 'fecha_creacion', 'fecha_actualizacion']

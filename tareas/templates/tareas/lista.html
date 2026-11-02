@@ -2,25 +2,163 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Gestor de Tareas</title>
+    <title>Gestor de Tareas (Simple)</title>
   </head>
   <body>
-    <h1>Lista de Tareas</h1>
-    <a href="{% url 'crear_tarea' %}">+ Crear nueva tarea</a>
-    <ul>
-      {% for tarea in tareas %}
-      <li>
-        <strong
-          >{% if tarea.completada %}<s>{{ tarea.titulo }}</s>{% else %}{{
-          tarea.titulo }}{% endif %}</strong
-        >
-        <p>{{ tarea.descripcion }}</p>
-        <a href="{% url 'editar_tarea' tarea.pk %}">Editar</a> |
-        <a href="{% url 'eliminar_tarea' tarea.pk %}">Eliminar</a>
-      </li>
-      {% empty %}
-      <li>No hay tareas pendientes.</li>
-      {% endfor %}
+    <h2>Mis Tareas</h2>
+    <button onclick="cerrarSesion()">Cerrar Sesión</button>
+    <hr />
+
+    <!-- Formulario para Crear Tarea -->
+    <h3>Crear Nueva Tarea</h3>
+    <form id="form-crear">
+      <label>Título:</label><br />
+      <input type="text" id="titulo" required /><br /><br />
+
+      <label>Descripción:</label><br />
+      <textarea id="descripcion"></textarea><br /><br />
+
+      <button type="submit">Agregar Tarea</button>
+    </form>
+
+    <hr />
+
+    <!-- Contenedor para listar tareas -->
+    <h3>Lista de Tareas</h3>
+    <ul id="contenedor-tareas">
+      <li>Cargando tareas...</li>
     </ul>
+
+    <script>
+      // 1. Obtener el Token JWT desde el almacenamiento local
+      const token = localStorage.getItem("access_token");
+
+      // Si no existe el token, redirigir al login
+      if (!token) {
+        window.location.href = '{% url "pantalla_login" %}';
+      }
+
+      // Configuración de cabeceras reutilizable con el Token Bearer
+      const headersAutenticadas = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+
+      // -------------------------------------------------------------
+      // A. CONSULTAR / LISTAR TAREAS (GET /api/tareas/)
+      // -------------------------------------------------------------
+      async function cargarTareas() {
+        try {
+          const response = await fetch("/api/tareas/", {
+            method: "GET",
+            headers: headersAutenticadas,
+          });
+
+          if (response.status === 401) {
+            alert("Sesión expirada. Por favor inicia sesión nuevamente.");
+            cerrarSesion();
+            return;
+          }
+
+          const tareas = await response.json();
+          const contenedor = document.getElementById("contenedor-tareas");
+          contenedor.innerHTML = "";
+
+          if (tareas.length === 0) {
+            contenedor.innerHTML = "<li>No tienes tareas creadas.</li>";
+            return;
+          }
+
+          tareas.forEach((tarea) => {
+            const li = document.createElement("li");
+
+            // Formato visual si está completada
+            const tituloTexto = tarea.completada
+              ? `<s>${tarea.titulo}</s>`
+              : tarea.titulo;
+
+            li.innerHTML = `
+                        <strong>${tituloTexto}</strong> - ${tarea.descripcion || "Sin descripción"}
+                        [<a href="#" onclick="completarTarea(${tarea.id}, ${!tarea.completada})">
+                            ${tarea.completada ? "Desmarcar" : "Completar"}
+                        </a>]
+                        [<a href="#" onclick="eliminarTarea(${tarea.id})">Eliminar</a>]
+                    `;
+            contenedor.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Error al cargar tareas:", error);
+        }
+      }
+
+      // -------------------------------------------------------------
+      // B. CREAR TAREA (POST /api/tareas/)
+      // -------------------------------------------------------------
+      document
+        .getElementById("form-crear")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const titulo = document.getElementById("titulo").value;
+          const descripcion = document.getElementById("descripcion").value;
+
+          const response = await fetch("/api/tareas/", {
+            method: "POST",
+            headers: headersAutenticadas,
+            body: JSON.stringify({ titulo, descripcion }),
+          });
+
+          if (response.ok) {
+            document.getElementById("form-crear").reset();
+            cargarTareas(); // Recargar la lista tras crear
+          } else {
+            alert("Error al crear la tarea.");
+          }
+        });
+
+      // -------------------------------------------------------------
+      // C. MODIFICAR / COMPLETAR TAREA (PUT /api/tareas/<id>/)
+      // -------------------------------------------------------------
+      async function completarTarea(id, nuevoEstado) {
+        const response = await fetch(`/api/tareas/${id}/`, {
+          method: "PUT",
+          headers: headersAutenticadas,
+          body: JSON.stringify({ completada: nuevoEstado }),
+        });
+
+        if (response.ok) {
+          cargarTareas();
+        } else {
+          alert("Error al actualizar la tarea.");
+        }
+      }
+
+      // -------------------------------------------------------------
+      // D. ELIMINAR TAREA (DELETE /api/tareas/<id>/)
+      // -------------------------------------------------------------
+      async function eliminarTarea(id) {
+        if (!confirm("¿Deseas eliminar esta tarea?")) return;
+
+        const response = await fetch(`/api/tareas/${id}/`, {
+          method: "DELETE",
+          headers: headersAutenticadas,
+        });
+
+        if (response.ok) {
+          cargarTareas();
+        } else {
+          alert("Error al eliminar la tarea.");
+        }
+      }
+
+      // Cerrar Sesión
+      function cerrarSesion() {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        window.location.href = '{% url "pantalla_login" %}';
+      }
+
+      // Cargar las tareas automáticamente al abrir la página
+      cargarTareas();
+    </script>
   </body>
 </html>
