@@ -2,32 +2,53 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Gestor de Tareas (Simple)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestor de Tareas</title>
+    <!-- Incluimos Tailwind CSS para un diseño moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <h2>Mis Tareas</h2>
-    <button onclick="cerrarSesion()">Cerrar Sesión</button>
-    <hr />
+  <body class="bg-slate-100 min-h-screen text-slate-800">
 
-    <!-- Formulario para Crear Tarea -->
-    <h3>Crear Nueva Tarea</h3>
-    <form id="form-crear">
-      <label>Título:</label><br />
-      <input type="text" id="titulo" required /><br /><br />
+    <!-- Contenedor Principal -->
+    <div class="max-w-2xl mx-auto py-10 px-4">
 
-      <label>Descripción:</label><br />
-      <textarea id="descripcion"></textarea><br /><br />
+      <!-- Cabecera -->
+      <div class="flex justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-700">Mis Tareas</h2>
+        <button onclick="cerrarSesion()" class="bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg transition duration-200 text-sm">
+          Cerrar Sesión
+        </button>
+      </div>
 
-      <button type="submit">Agregar Tarea</button>
-    </form>
+      <!-- Formulario para Crear Tarea -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4">Crear Nueva Tarea</h3>
+        <form id="form-crear" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-600 mb-1">Título:</label>
+            <input type="text" id="titulo" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
 
-    <hr />
+          <div>
+            <label class="block text-sm font-medium text-slate-600 mb-1">Descripción:</label>
+            <textarea id="descripcion" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+          </div>
 
-    <!-- Contenedor para listar tareas -->
-    <h3>Lista de Tareas</h3>
-    <ul id="contenedor-tareas">
-      <li>Cargando tareas...</li>
-    </ul>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+            Agregar Tarea
+          </button>
+        </form>
+      </div>
+
+      <!-- Contenedor para listar tareas -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4">Lista de Tareas</h3>
+        <ul id="contenedor-tareas" class="divide-y divide-slate-100 space-y-3">
+          <li class="text-slate-400 italic py-2">Cargando tareas...</li>
+        </ul>
+      </div>
+
+    </div>
 
     <script>
       // 1. Obtener el Token JWT desde el almacenamiento local
@@ -65,25 +86,33 @@
           contenedor.innerHTML = "";
 
           if (tareas.length === 0) {
-            contenedor.innerHTML = "<li>No tienes tareas creadas.</li>";
+            contenedor.innerHTML = `<li class="text-slate-400 italic py-2 text-center">No tienes tareas creadas.</li>`;
             return;
           }
 
           tareas.forEach((tarea) => {
             const li = document.createElement("li");
+            li.className = "flex items-center justify-between py-3 px-4 bg-slate-50 rounded-lg border border-slate-100";
 
             // Formato visual si está completada
             const tituloTexto = tarea.completada
-              ? `<s>${tarea.titulo}</s>`
-              : tarea.titulo;
+              ? `<span class="line-through text-slate-400">${tarea.titulo}</span>`
+              : `<span class="font-medium text-slate-800">${tarea.titulo}</span>`;
 
             li.innerHTML = `
-                        <strong>${tituloTexto}</strong> - ${tarea.descripcion || "Sin descripción"}
-                        [<a href="#" onclick="completarTarea(${tarea.id}, ${!tarea.completada})">
-                            ${tarea.completada ? "Desmarcar" : "Completar"}
-                        </a>]
-                        [<a href="#" onclick="eliminarTarea(${tarea.id})">Eliminar</a>]
-                    `;
+                <div class="space-y-1">
+                    <div>${tituloTexto}</div>
+                    <div class="text-sm text-slate-500">${tarea.descripcion || "Sin descripción"}</div>
+                </div>
+                <div class="flex items-center space-x-3 text-sm">
+                    <button onclick="completarTarea(${tarea.id}, ${!tarea.completada})" class="${tarea.completada ? 'text-amber-600 hover:text-amber-700' : 'text-emerald-600 hover:text-emerald-700'} font-medium">
+                        ${tarea.completada ? "Desmarcar" : "Completar"}
+                    </button>
+                    <button onclick="eliminarTarea(${tarea.id})" class="text-red-500 hover:text-red-700 font-medium">
+                        Eliminar
+                    </button>
+                </div>
+            `;
             contenedor.appendChild(li);
           });
         } catch (error) {

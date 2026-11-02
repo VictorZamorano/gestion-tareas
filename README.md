@@ -13,3 +13,9 @@ Aplica las migraciones de la base de datos e inicia el servidor de desarrollo:
 
     python manage.py migrate
     python manage.py runserver
+
+
+## Pruebas
+Para poder abrir el
+
+    http://localhost:8000/

@@ -3,12 +3,12 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 # Importamos las vistas basadas en clases de tu compañero y tus vistas de funciones para tareas
 from .views import (
-    RegistroView, 
-    PerfilUsuarioView, 
-    VistaExclusivaAdminView,
     LoginView,
+    PerfilUsuarioView,
+    RegistroView,
+    VistaExclusivaAdminView,
+    detalle_tarea,
     lista_crear_tareas,
-    detalle_tarea
 )
 
 urlpatterns = [
