@@ -16,7 +16,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Tarea
 from .permissions import EsAdministrador
-from .serializers import RegistroSerializer, TareaSerializer, UsuarioPerfilSerializer
+from .serializers import (
+    AdminUsuarioUpdateSerializer,
+    RegistroSerializer,
+    TareaSerializer,
+    UsuarioPerfilSerializer,
+)
 
 User = get_user_model()
 
@@ -98,6 +103,17 @@ class VistaExclusivaAdminView(generics.ListAPIView):
     serializer_class = UsuarioPerfilSerializer
     queryset = User.objects.all()
 
+class AdminGestionUsuariosView(generics.ListCreateAPIView):
+    """Permite al administrador ver todos los usuarios"""
+    permission_classes = [IsAuthenticated, EsAdministrador]
+    serializer_class = UsuarioPerfilSerializer
+    queryset = User.objects.all()
+
+class AdminDetalleUsuarioView(generics.RetrieveUpdateAPIView):
+    """Permite al administrador modificar el rol o desactivar un usuario específico"""
+    permission_classes = [IsAuthenticated, EsAdministrador]
+    serializer_class = AdminUsuarioUpdateSerializer
+    queryset = User.objects.all()
 
 # -----------------------
 # Tareas API Views

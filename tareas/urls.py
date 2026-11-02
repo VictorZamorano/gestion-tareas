@@ -3,6 +3,8 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 # Importamos las vistas basadas en clases de tu compañero y tus vistas de funciones para tareas
 from .views import (
+    AdminDetalleUsuarioView,
+    AdminGestionUsuariosView,
     LoginView,
     PerfilUsuarioView,
     RegistroView,
@@ -20,6 +22,8 @@ urlpatterns = [
     path('logout/', TokenBlacklistView.as_view(), name='api_logout'), # Invalida el refresh token
     path('admin-restringido/', VistaExclusivaAdminView.as_view(), name='api_admin_restringido'),
     path('perfil-vista/', vista_pantalla_perfil, name='pantalla_perfil'),
+    path('admin/usuarios/', AdminGestionUsuariosView.as_view(), name='api_admin_usuarios'),
+    path('admin/usuarios/<int:pk>/', AdminDetalleUsuarioView.as_view(), name='api_admin_detalle_usuario'),
 
     # --- Endpoints del CRUD de Tareas ---
     path('tareas/', lista_crear_tareas, name='api_lista_crear_tareas'),
