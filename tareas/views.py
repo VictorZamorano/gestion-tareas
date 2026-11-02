@@ -1,19 +1,22 @@
 from typing import Any, ClassVar
 
 from django.contrib.auth import get_user_model
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import get_object_or_404, render
 from rest_framework import generics, status
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Tarea
 from .permissions import EsAdministrador
-from .serializers import RegistroSerializer, UsuarioPerfilSerializer, TareaSerializer
+from .serializers import RegistroSerializer, TareaSerializer, UsuarioPerfilSerializer
 
 User = get_user_model()
 
@@ -23,6 +26,9 @@ def vista_pantalla_login(request):
 
 def vista_pantalla_registro(request):
     return render(request, 'tareas/registro.html')
+
+def vista_pantalla_perfil(request):
+    return render(request, 'tareas/perfil.html')
 
 def vista_pantalla_tareas(request):
     return render(request, 'tareas/lista.html')

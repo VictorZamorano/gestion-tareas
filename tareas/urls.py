@@ -9,6 +9,7 @@ from .views import (
     VistaExclusivaAdminView,
     detalle_tarea,
     lista_crear_tareas,
+    vista_pantalla_perfil,
 )
 
 urlpatterns = [
@@ -18,6 +19,7 @@ urlpatterns = [
     path('perfil/', PerfilUsuarioView.as_view(), name='api_perfil'),
     path('logout/', TokenBlacklistView.as_view(), name='api_logout'), # Invalida el refresh token
     path('admin-restringido/', VistaExclusivaAdminView.as_view(), name='api_admin_restringido'),
+    path('perfil-vista/', vista_pantalla_perfil, name='pantalla_perfil'),
 
     # --- Endpoints del CRUD de Tareas ---
     path('tareas/', lista_crear_tareas, name='api_lista_crear_tareas'),
