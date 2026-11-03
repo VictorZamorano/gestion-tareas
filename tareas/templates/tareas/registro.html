@@ -69,6 +69,7 @@
         text-align: center;
         padding: 10px;
         border-radius: 4px;
+        white-space: pre-line;
       }
       .alert-danger {
         background-color: #f8d7da;
@@ -125,6 +126,16 @@
           />
         </div>
 
+        <div class="form-group">
+          <label for="password2">Confirmar Contraseña</label>
+          <input
+            type="password"
+            id="password2"
+            required
+            autocomplete="new-password"
+          />
+        </div>
+
         <button type="submit">Registrarse</button>
       </form>
 
@@ -144,6 +155,7 @@
           const username = document.getElementById("username").value;
           const email = document.getElementById("email").value;
           const password = document.getElementById("password").value;
+          const password2 = document.getElementById("password2").value;
 
           const errorMessageDiv = document.getElementById("error-message");
           const successMessageDiv = document.getElementById("success-message");
@@ -162,6 +174,7 @@
                 username: username,
                 email: email,
                 password: password,
+                password2: password2,
               }),
             });
 
@@ -181,17 +194,23 @@
                 window.location.href = '{% url "pantalla_login" %}';
               }, 1500);
             } else {
-              // Formatear errores retornados por los validadores de Django (ej: usuario ya existe)
+              // Formatear errores retornados por los validadores de Django
+              // sin innerHTML: los mensajes se insertan como texto plano.
               let errorText = "";
-              if (typeof data === "object") {
-                for (const key in data) {
-                  errorText += `${key}: ${data[key].join(", ")}<br>`;
+              if (data && typeof data === "object") {
+                const lineas = [];
+                for (const [campo, valor] of Object.entries(data)) {
+                  const mensaje = Array.isArray(valor)
+                    ? valor.join(", ")
+                    : String(valor);
+                  lineas.push(`${campo}: ${mensaje}`);
                 }
+                errorText = lineas.join("\n");
               } else {
                 errorText = "Error al registrar el usuario.";
               }
 
-              errorMessageDiv.innerHTML = errorText;
+              errorMessageDiv.textContent = errorText;
               errorMessageDiv.style.display = "block";
             }
           } catch (error) {

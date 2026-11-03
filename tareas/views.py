@@ -21,6 +21,7 @@ from .serializers import (
     RegistroSerializer,
     TareaSerializer,
     UsuarioPerfilSerializer,
+    AdminUsuarioListSerializer,
 )
 
 User = get_user_model()
@@ -51,7 +52,7 @@ class MiTokenObtainPairSerializer(TokenObtainPairSerializer):
             "id": self.user.id,
             "username": self.user.username,
             "email": self.user.email,
-            "rol": getattr(self.user, "rol", "cliente"),
+            "rol": getattr(self.user, "rol", "usuario"),
         }
         return data
 
@@ -103,11 +104,11 @@ class VistaExclusivaAdminView(generics.ListAPIView):
     serializer_class = UsuarioPerfilSerializer
     queryset = User.objects.all()
 
-class AdminGestionUsuariosView(generics.ListCreateAPIView):
+class AdminGestionUsuariosView(generics.ListAPIView):
     """Permite al administrador ver todos los usuarios"""
     permission_classes = [IsAuthenticated, EsAdministrador]
-    serializer_class = UsuarioPerfilSerializer
-    queryset = User.objects.all()
+    serializer_class = AdminUsuarioListSerializer
+    queryset = User.objects.all().order_by('id')
 
 class AdminDetalleUsuarioView(generics.RetrieveUpdateAPIView):
     """Permite al administrador modificar el rol o desactivar un usuario específico"""
@@ -118,6 +119,11 @@ class AdminDetalleUsuarioView(generics.RetrieveUpdateAPIView):
 # -----------------------
 # Tareas API Views
 #------------------------
+def _es_administrador(user):
+    """Devuelve True si el usuario tiene el rol de administrador."""
+    return getattr(user, 'rol', None) == 'administrador'
+
+
 # 1. CONSULTAR Y CREAR TAREAS
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
@@ -125,20 +131,50 @@ class AdminDetalleUsuarioView(generics.RetrieveUpdateAPIView):
 def lista_crear_tareas(request):
     # request.user se completa automáticamente tras validar el token JWT
     if request.method == 'GET':
-        tareas = Tarea.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+        # El administrador ve todas las tareas; el resto, solo las suyas.
+        if _es_administrador(request.user):
+            tareas = Tarea.objects.select_related('usuario').all()
+        else:
+            tareas = Tarea.objects.filter(usuario=request.user)
+        tareas = tareas.order_by('-fecha_creacion')
         serializer = TareaSerializer(tareas, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
-        serializer = TareaSerializer(data=request.data)
+        datos = request.data.copy()
+        usuario_destino = request.user
+
+        # Solo un administrador puede crear tareas para otro usuario.
+        if 'usuario_id' in datos:
+            if not _es_administrador(request.user):
+                return Response(
+                    {'usuario_id': [
+                        'Solo un administrador puede asignar tareas a otros usuarios.'
+                    ]},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            try:
+                usuario_id = int(datos.pop('usuario_id'))
+            except (TypeError, ValueError):
+                return Response(
+                    {'usuario_id': ['El identificador de usuario no es válido.']},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            usuario_destino = get_object_or_404(
+                User, pk=usuario_id, is_active=True
+            )
+
+        serializer = TareaSerializer(data=datos)
         if serializer.is_valid():
-            serializer.save(usuario=request.user)  # Asigna la tarea al usuario del Token
+            serializer.save(usuario=usuario_destino)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 2. VER DETALLE, MODIFICAR Y ELIMINAR TAREA
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def detalle_tarea(request, pk):
@@ -148,7 +184,7 @@ def detalle_tarea(request, pk):
         serializer = TareaSerializer(tarea)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    elif request.method == 'PUT':
+    elif request.method in ('PUT', 'PATCH'):
         serializer = TareaSerializer(tarea, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

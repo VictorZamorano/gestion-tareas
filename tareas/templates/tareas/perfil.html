@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="es">
   <head>
@@ -33,74 +34,67 @@
       </div>
     </div>
 
+    <script src="{% static 'tareas/js/api.js' %}"></script>
     <script>
-      // 1. Obtener el Token JWT del almacenamiento local
-      const token = localStorage.getItem("access_token");
+      // Crea un campo del perfil sin usar innerHTML con datos del servidor.
+      function crearCampo(etiqueta, valor, esRol = false) {
+        const contenedor = document.createElement("div");
 
-      // Si no hay token, redirigir al login
-      if (!token) {
-        window.location.href = '{% url "pantalla_login" %}';
+        const titulo = document.createElement("span");
+        titulo.className =
+          "text-xs text-slate-400 block uppercase font-semibold";
+        titulo.textContent = etiqueta;
+
+        const dato = document.createElement("span");
+        dato.className = esRol
+          ? "inline-block mt-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs font-bold uppercase"
+          : "font-medium text-slate-700";
+        dato.textContent = valor;
+
+        contenedor.append(titulo, dato);
+        return contenedor;
       }
 
-      // 2. Consultar los datos del usuario autenticado (GET /api/perfil/)
+      // Consultar los datos del usuario autenticado (GET /api/perfil/)
       async function cargarPerfil() {
         try {
-          const response = await fetch("/api/perfil/", {
-            method: "GET",
-            headers: {
-              "Authorization": `Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
-          });
-
-          if (response.status === 401) {
-            alert("Sesión expirada o token inválido.");
-            cerrarSesion();
-            return;
-          }
+          const response = await api.apiFetch("/api/perfil/");
+          if (!response.ok) return;
 
           const user = await response.json();
           const contenedor = document.getElementById("info-usuario");
+          contenedor.replaceChildren();
 
-          // Pintar los datos en pantalla de forma segura contra XSS
-          contenedor.innerHTML = `
-            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-3">
-              <div>
-                <span class="text-xs text-slate-400 block uppercase font-semibold">ID de Usuario</span>
-                <span class="font-medium text-slate-700">${user.id}</span>
-              </div>
-              <div>
-                <span class="text-xs text-slate-400 block uppercase font-semibold">Nombre de Usuario</span>
-                <span class="font-medium text-slate-700">${user.username}</span>
-              </div>
-              <div>
-                <span class="text-xs text-slate-400 block uppercase font-semibold">Correo Electrónico</span>
-                <span class="font-medium text-slate-700">${user.email || "No especificado"}</span>
-              </div>
-              <div>
-                <span class="text-xs text-slate-400 block uppercase font-semibold">Rol Asignado</span>
-                <span class="inline-block mt-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs font-bold uppercase">${user.rol}</span>
-              </div>
-              <div>
-                <span class="text-xs text-slate-400 block uppercase font-semibold">Fecha de Registro</span>
-                <span class="font-medium text-slate-700">${new Date(user.date_joined).toLocaleDateString()}</span>
-              </div>
-            </div>
-          `;
+          const tarjeta = document.createElement("div");
+          tarjeta.className =
+            "bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-3";
+
+          const fecha = user.date_joined
+            ? new Date(user.date_joined).toLocaleDateString()
+            : "No disponible";
+
+          tarjeta.append(
+            crearCampo("ID de Usuario", String(user.id)),
+            crearCampo("Nombre de Usuario", user.username),
+            crearCampo("Correo Electrónico", user.email || "No especificado"),
+            crearCampo("Rol Asignado", user.rol, true),
+            crearCampo("Fecha de Registro", fecha),
+          );
+
+          contenedor.appendChild(tarjeta);
         } catch (error) {
           console.error("Error al cargar perfil:", error);
         }
       }
 
-      // Función para cerrar sesión limpiando el almacenamiento
-      function cerrarSesion() {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        window.location.href = '{% url "pantalla_login" %}';
+      // Cerrar sesión invalidando el refresh token en el servidor.
+      async function cerrarSesion() {
+        await api.logout();
       }
 
-      // Ejecutar al cargar la vista
-      cargarPerfil();
+      if (api.requireAuth()) {
+        cargarPerfil();
+      }
     </script>
   </body>
 </html>
