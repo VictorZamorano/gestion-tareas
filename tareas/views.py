@@ -178,7 +178,31 @@ def lista_crear_tareas(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def detalle_tarea(request, pk):
-    tarea = get_object_or_404(Tarea, pk=pk, usuario=request.user)
+    # El admin puede consultar y eliminar cualquier tarea.
+    # El usuario normal solo accede a las suyas.
+    if _es_administrador(request.user):
+        tarea = get_object_or_404(Tarea, pk=pk)
+    else:
+        tarea = get_object_or_404(Tarea, pk=pk, usuario=request.user)
+
+    # El propietario puede editar todo. Un administrador puede cambiar el
+    # estado de una tarea ajena, pero no su título ni su descripción.
+    if request.method in ('PUT', 'PATCH') and tarea.usuario_id != request.user.id:
+        if not _es_administrador(request.user):
+            return Response(
+                {'detail': 'No puedes modificar tareas de otros usuarios.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        campos_no_permitidos = set(request.data) - {'completada'}
+        if campos_no_permitidos:
+            return Response(
+                {'detail': (
+                    'Solo puedes cambiar el estado de completada '
+                    'en tareas de otros usuarios.'
+                )},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
     if request.method == 'GET':
         serializer = TareaSerializer(tarea)

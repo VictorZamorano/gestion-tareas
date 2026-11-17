@@ -405,11 +405,13 @@
 
             li.appendChild(info);
 
-            // Solo el propietario puede completar o eliminar su tarea.
-            if (tarea.usuario_id === currentUserId) {
-              const acciones = document.createElement("div");
-              acciones.className = "flex items-center space-x-3 text-sm";
-              acciones.append(
+            const esPropia = tarea.usuario_id === currentUserId;
+            const acciones = document.createElement("div");
+            acciones.className = "flex items-center space-x-3 text-sm";
+
+            // Completar / desmarcar: el propietario o un administrador.
+            if (esPropia || esAdmin) {
+              acciones.appendChild(
                 crearBoton(
                   tarea.completada ? "Desmarcar" : "Completar",
                   `${
@@ -419,12 +421,25 @@
                   } font-medium`,
                   () => completarTarea(tarea.id, !tarea.completada),
                 ),
+              );
+            }
+
+            // Eliminar: el propietario o un administrador.
+            if (esPropia || esAdmin) {
+              acciones.appendChild(
                 crearBoton(
                   "Eliminar",
                   "text-red-500 hover:text-red-700 font-medium",
-                  () => eliminarTarea(tarea.id),
+                  () =>
+                    eliminarTarea(
+                      tarea.id,
+                      esPropia ? null : tarea.usuario_username,
+                    ),
                 ),
               );
+            }
+
+            if (acciones.childElementCount > 0) {
               li.appendChild(acciones);
             }
 
@@ -487,8 +502,11 @@
       }
 
       // 8. Eliminar tarea
-      async function eliminarTarea(id) {
-        if (!confirm("¿Deseas eliminar esta tarea?")) return;
+      async function eliminarTarea(id, propietario) {
+        const aviso = propietario
+          ? `¿Eliminar la tarea de ${propietario}?`
+          : "¿Deseas eliminar esta tarea?";
+        if (!confirm(aviso)) return;
 
         const response = await api.apiFetch(`/api/tareas/${id}/`, {
           method: "DELETE",

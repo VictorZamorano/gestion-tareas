@@ -154,7 +154,36 @@ class GestionTareasAdminTests(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['titulo'], 'De juan')
 
-    # --- El admin no puede editar ni eliminar tareas ajenas ---
+    # --- El admin puede completar y eliminar cualquier tarea ---
+
+    def test_admin_puede_completar_tarea_ajena(self):
+        tarea = Tarea.objects.create(titulo='De juan', usuario=self.juan)
+        self.autenticar(self.admin)
+
+        response = self.client.patch(
+            f'/api/tareas/{tarea.id}/',
+            {'completada': True},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        tarea.refresh_from_db()
+        self.assertTrue(tarea.completada)
+
+    def test_admin_no_puede_cambiar_titulo_al_completar_tarea_ajena(self):
+        tarea = Tarea.objects.create(titulo='De juan', usuario=self.juan)
+        self.autenticar(self.admin)
+
+        response = self.client.patch(
+            f'/api/tareas/{tarea.id}/',
+            {'completada': True, 'titulo': 'Cambiada'},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        tarea.refresh_from_db()
+        self.assertFalse(tarea.completada)
+        self.assertEqual(tarea.titulo, 'De juan')
 
     def test_admin_no_puede_editar_tarea_ajena(self):
         tarea = Tarea.objects.create(titulo='De juan', usuario=self.juan)
@@ -166,13 +195,31 @@ class GestionTareasAdminTests(APITestCase):
             format='json',
         )
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         tarea.refresh_from_db()
         self.assertEqual(tarea.titulo, 'De juan')
 
-    def test_admin_no_puede_eliminar_tarea_ajena(self):
+    def test_admin_puede_eliminar_tarea_ajena(self):
         tarea = Tarea.objects.create(titulo='De juan', usuario=self.juan)
         self.autenticar(self.admin)
+
+        response = self.client.delete(f'/api/tareas/{tarea.id}/')
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Tarea.objects.filter(pk=tarea.id).exists())
+
+    def test_admin_puede_ver_detalle_tarea_ajena(self):
+        tarea = Tarea.objects.create(titulo='De juan', usuario=self.juan)
+        self.autenticar(self.admin)
+
+        response = self.client.get(f'/api/tareas/{tarea.id}/')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['usuario_username'], 'juan_test')
+
+    def test_usuario_normal_no_puede_eliminar_tarea_ajena(self):
+        tarea = Tarea.objects.create(titulo='De ana', usuario=self.ana)
+        self.autenticar(self.juan)
 
         response = self.client.delete(f'/api/tareas/{tarea.id}/')
 

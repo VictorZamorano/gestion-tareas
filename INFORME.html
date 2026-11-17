@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+<meta charset="UTF-8">
+<title>Informe - Gestor de Tareas</title>
+<!--[if gte mso 9]>
+<xml>
+  <w:WordDocument>
+    <w:View>Print</w:View>
+    <w:Zoom>100</w:Zoom>
+  </w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+  @page {
+    size: A4;
+    margin: 2.5cm 2.5cm 2.5cm 3cm;
+  }
+  body {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #1a1a1a;
+  }
+  h1 {
+    font-size: 20pt;
+    color: #1f2a44;
+    margin: 0 0 6pt 0;
+  }
+  h2 {
+    font-size: 15pt;
+    color: #1f2a44;
+    border-bottom: 1px solid #c9d2e3;
+    padding-bottom: 3pt;
+    margin-top: 18pt;
+    margin-bottom: 8pt;
+  }
+  h3 {
+    font-size: 12.5pt;
+    color: #2c3e63;
+    margin-top: 14pt;
+    margin-bottom: 6pt;
+  }
+  p {
+    margin: 0 0 8pt 0;
+    text-align: justify;
+  }
+  ul, ol {
+    margin-top: 0;
+    margin-bottom: 8pt;
+  }
+  li {
+    margin-bottom: 3pt;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 6pt 0 10pt 0;
+    font-size: 10pt;
+  }
+  th, td {
+    border: 1px solid #b9c2d4;
+    padding: 4pt 6pt;
+    vertical-align: top;
+    text-align: left;
+  }
+  th {
+    background-color: #e8edf6;
+    font-weight: bold;
+  }
+  pre {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 9pt;
+    background-color: #f4f6fa;
+    border: 1px solid #d5dbe8;
+    padding: 7pt 9pt;
+    white-space: pre-wrap;
+    margin: 6pt 0 10pt 0;
+  }
+  code {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 9.5pt;
+  }
+  .cover {
+    text-align: center;
+    padding-top: 90pt;
+  }
+  .cover-sub {
+    font-size: 13pt;
+    color: #5a6a8a;
+    text-transform: uppercase;
+    letter-spacing: 1pt;
+    margin-bottom: 24pt;
+    text-align: center;
+  }
+  .cover-title {
+    font-size: 26pt;
+    color: #1f2a44;
+    line-height: 1.25;
+    margin-bottom: 60pt;
+  }
+  .cover-data {
+    width: 70%;
+    margin: 0 auto;
+    font-size: 12pt;
+  }
+  .cover-data td {
+    border: none;
+    padding: 4pt 8pt;
+  }
+  .cover-data td:first-child {
+    text-align: right;
+    font-weight: bold;
+    color: #2c3e63;
+    width: 35%;
+  }
+  .figura {
+    border: 2px dashed #8a9bbd;
+    background-color: #f8f9fc;
+    padding: 16pt;
+    margin: 8pt 0 12pt 0;
+    text-align: center;
+    color: #43506b;
+  }
+  .figura .figura-titulo {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5pt;
+  }
+  .figura .figura-nota {
+    font-size: 9.5pt;
+    font-style: italic;
+    display: block;
+  }
+  .nota {
+    background-color: #fff8e6;
+    border-left: 4px solid #d9a441;
+    padding: 6pt 10pt;
+    margin: 8pt 0 10pt 0;
+    font-size: 10pt;
+  }
+  .salto {
+    page-break-before: always;
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= PORTADA ================= -->
+<div class="cover">
+  <p class="cover-sub">Informe de trabajo práctico</p>
+  <h1 class="cover-title">Desarrollo de un Gestor de Tareas Web con Django y Apoyo de Inteligencia Artificial</h1>
+  <table class="cover-data">
+    <tr><td>Asignatura:</td><td>[Completar]</td></tr>
+    <tr><td>Integrantes:</td><td>[Completar]</td></tr>
+    <tr><td>Docente:</td><td>[Completar]</td></tr>
+    <tr><td>Fecha:</td><td>[Completar]</td></tr>
+  </table>
+</div>
+
+<!-- ================= 1. INTRODUCCIÓN ================= -->
+<h2 class="salto">1. Introducción</h2>
+
+<p>La organización de tareas es una necesidad habitual en equipos de estudio, proyectos académicos y trabajos colaborativos. En muchos casos, la gestión se realiza con notas sueltas, planillas o mensajes, lo que dificulta saber quién es responsable de cada tarea, cuál es su estado y quién puede modificarla. Cuando además intervienen distintos niveles de responsabilidad, aparece la necesidad de distinguir entre usuarios comunes y administradores que supervisan el trabajo del resto.</p>
+
+<p>Para abordar esa necesidad se desarrolló <strong>Gestor de Tareas</strong>, una aplicación web construida con <strong>Django</strong> y <strong>Django REST Framework (DRF)</strong> que permite registrarse, iniciar sesión, administrar tareas personales y, en el caso de los administradores, gestionar usuarios y tareas de otros. La autenticación se implementó con <strong>JSON Web Tokens (JWT)</strong> mediante SimpleJWT, y la interfaz se construyó con plantillas HTML, Tailwind CSS y JavaScript sin frameworks adicionales.</p>
+
+<p>El propósito de utilizar inteligencia artificial durante el desarrollo fue acelerar las tareas repetitivas y mejorar la calidad del código: análisis del repositorio, implementación de funcionalidades, revisión de medidas de seguridad, generación de pruebas automatizadas y documentación. La IA se utilizó como un asistente técnico dentro del editor, no como un reemplazo del criterio del grupo. Cada cambio propuesto fue revisado, ejecutado y validado con pruebas antes de darlo por definitivo.</p>
+
+<!-- ================= 2. OBJETIVOS ================= -->
+<h2>2. Objetivos</h2>
+
+<h3>2.1 Objetivo general</h3>
+<p>Desarrollar una aplicación web para la gestión de tareas personales con autenticación basada en JWT y control de acceso por roles, incorporando herramientas de inteligencia artificial como apoyo en el análisis, la implementación y la verificación del código.</p>
+
+<h3>2.2 Objetivos específicos</h3>
+<ol>
+  <li>Modelar usuarios con roles diferenciados y tareas asociadas a un propietario.</li>
+  <li>Implementar el registro, el inicio y el cierre de sesión utilizando JWT.</li>
+  <li>Desarrollar el CRUD de tareas con permisos basados en el propietario del recurso.</li>
+  <li>Construir un panel de administración para consultar usuarios y modificar su rol o estado.</li>
+  <li>Permitir que el administrador cree, visualice, complete y elimine tareas de cualquier usuario.</li>
+  <li>Aplicar medidas de seguridad tanto en el backend como en el frontend.</li>
+  <li>Verificar el funcionamiento mediante pruebas automatizadas y documentar el proceso de desarrollo asistido por IA.</li>
+</ol>
+
+<!-- ================= 3. DESARROLLO ================= -->
+<h2 class="salto">3. Desarrollo</h2>
+
+<h3>3.1 Problema o necesidad abordada</h3>
+<p>El problema central es la falta de una herramienta sencilla que permita organizar tareas personales y, al mismo tiempo, ofrecer una visión administrativa del conjunto. La aplicación debía resolver dos necesidades complementarias:</p>
+<ul>
+  <li>Que cada usuario pudiera crear, consultar, completar y eliminar sus propias tareas.</li>
+  <li>Que un administrador pudiera supervisar a los usuarios, asignarles tareas y colaborar en su gestión.</li>
+</ul>
+
+<p>Se definieron los siguientes requisitos funcionales:</p>
+<table>
+  <thead><tr><th>Código</th><th>Requisito</th></tr></thead>
+  <tbody>
+    <tr><td>RF1</td><td>Registro de usuarios con validación de datos y contraseña.</td></tr>
+    <tr><td>RF2</td><td>Inicio de sesión con JWT y datos del usuario en la respuesta.</td></tr>
+    <tr><td>RF3</td><td>Consulta del perfil del usuario autenticado.</td></tr>
+    <tr><td>RF4</td><td>CRUD de tareas propias.</td></tr>
+    <tr><td>RF5</td><td>Panel de administración para listar usuarios y cambiar su rol o estado.</td></tr>
+    <tr><td>RF6</td><td>El administrador puede crear tareas para otros usuarios.</td></tr>
+    <tr><td>RF7</td><td>El administrador puede ver, completar y eliminar tareas ajenas.</td></tr>
+    <tr><td>RF8</td><td>Cierre de sesión con invalidación del refresh token.</td></tr>
+  </tbody>
+</table>
+
+<p>Como requisitos no funcionales se priorizaron la seguridad, la claridad del código, la separación de responsabilidades y la facilidad para ejecutar el proyecto en un entorno académico.</p>
+
+<h3>3.2 Lenguaje y framework utilizados</h3>
+<p>La aplicación se desarrolló con las siguientes tecnologías:</p>
+<table>
+  <thead><tr><th>Tecnología</th><th>Versión</th><th>Uso</th></tr></thead>
+  <tbody>
+    <tr><td>Python</td><td>3.x</td><td>Lenguaje principal.</td></tr>
+    <tr><td>Django</td><td>6.1.2</td><td>Framework web, ORM, autenticación y migraciones.</td></tr>
+    <tr><td>Django REST Framework</td><td>3.18.3</td><td>Serializadores, vistas y permisos de la API.</td></tr>
+    <tr><td>djangorestframework-simplejwt</td><td>5.5.1</td><td>Autenticación mediante JWT.</td></tr>
+    <tr><td>SQLite</td><td>Incluida en Django</td><td>Base de datos del proyecto.</td></tr>
+    <tr><td>HTML5 + Tailwind CSS</td><td>CDN</td><td>Interfaz de usuario.</td></tr>
+    <tr><td>JavaScript</td><td>Vanilla</td><td>Consumo de la API y lógica del frontend.</td></tr>
+  </tbody>
+</table>
+
+<p>Se eligió Django por su ORM, su sistema de autenticación integrado, su soporte de migraciones y sus mecanismos de seguridad por defecto. DRF permitió separar la lógica de la API mediante serializadores y permisos reutilizables. SimpleJWT se utilizó para que el frontend pudiera autenticarse con tokens en lugar de sesiones, lo que facilita el refresco automático y el cierre de sesión controlado.</p>
+
+<h3>3.3 Base de datos utilizada</h3>
+<p>Se utilizó <strong>SQLite</strong>, con el archivo <code>db.sqlite3</code> en la raíz del proyecto. Es una base adecuada para un trabajo académico porque no requiere un servidor adicional y permite ejecutar la aplicación con un solo comando. En un despliegue real se recomendaría PostgreSQL.</p>
+
+<p>El modelo de datos se compone de dos entidades:</p>
+
+<p><strong>Usuario</strong> (<code>tareas/models.py</code>): extiende <code>AbstractUser</code> e incorpora el campo <code>rol</code>.</p>
+<table>
+  <thead><tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr></thead>
+  <tbody>
+    <tr><td><code>username</code>, <code>email</code>, <code>password</code></td><td>Heredados</td><td>Datos de autenticación.</td></tr>
+    <tr><td><code>rol</code></td><td><code>CharField</code> con opciones</td><td><code>administrador</code> o <code>usuario</code>. Por defecto, <code>usuario</code>.</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Tarea</strong>: representa una tarea asociada a un usuario.</p>
+<table>
+  <thead><tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr></thead>
+  <tbody>
+    <tr><td><code>titulo</code></td><td><code>CharField(200)</code></td><td>Título de la tarea.</td></tr>
+    <tr><td><code>descripcion</code></td><td><code>TextField</code></td><td>Detalle opcional.</td></tr>
+    <tr><td><code>completada</code></td><td><code>BooleanField</code></td><td>Estado de finalización.</td></tr>
+    <tr><td><code>usuario</code></td><td><code>ForeignKey(Usuario)</code></td><td>Propietario. <code>on_delete=CASCADE</code>, <code>related_name='tareas'</code>.</td></tr>
+    <tr><td><code>fecha_creacion</code></td><td><code>DateTimeField(auto_now_add)</code></td><td>Fecha de alta.</td></tr>
+    <tr><td><code>fecha_actualizacion</code></td><td><code>DateTimeField(auto_now)</code></td><td>Última modificación.</td></tr>
+  </tbody>
+</table>
+
+<p>La relación es <strong>uno a muchos</strong>: un usuario puede tener muchas tareas y cada tarea pertenece a un único usuario.</p>
+
+<h3>3.4 Arquitectura o estructura general</h3>
+<p>La aplicación sigue el patrón <strong>MVT</strong> de Django para las vistas HTML y una <strong>API REST</strong> para la comunicación con el frontend. La estructura general es:</p>
+
+<pre>gestor_tareas/
+├── manage.py
+├── requirements.txt
+├── db.sqlite3
+├── gestor_tareas/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+└── tareas/
+    ├── models.py
+    ├── serializers.py
+    ├── views.py
+    ├── permissions.py
+    ├── urls.py
+    ├── tests.py
+    ├── apps.py
+    ├── templates/tareas/
+    │   ├── login.html
+    │   ├── registro.html
+    │   ├── lista.html
+    │   └── perfil.html
+    └── static/tareas/js/
+        └── api.js</pre>
+
+<p>El flujo de una petición es el siguiente:</p>
+
+<pre>Plantilla HTML + JS
+        │  fetch con Bearer token
+        ▼
+Vista DRF (views.py)
+        │  valida JWT y permisos
+        ▼
+Serializer (serializers.py)
+        │  valida y transforma datos
+        ▼
+Modelo / ORM (models.py)
+        ▼
+SQLite</pre>
+
+<p>El frontend guarda el access token y el refresh token en <code>localStorage</code>. La función <code>apiFetch</code> de <code>api.js</code> agrega el encabezado <code>Authorization</code>, y si recibe un <code>401</code> intenta renovar el token una sola vez antes de reintentar la petición.</p>
+
+<p>Los endpoints principales son:</p>
+<table>
+  <thead><tr><th>Método</th><th>Ruta</th><th>Acceso</th><th>Función</th></tr></thead>
+  <tbody>
+    <tr><td>POST</td><td><code>/api/login/</code></td><td>Público</td><td>Login y datos del usuario.</td></tr>
+    <tr><td>POST</td><td><code>/api/register/</code></td><td>Público</td><td>Registro.</td></tr>
+    <tr><td>POST</td><td><code>/api/token/refresh/</code></td><td>Público</td><td>Renovar access token.</td></tr>
+    <tr><td>GET</td><td><code>/api/perfil/</code></td><td>Autenticado</td><td>Perfil propio.</td></tr>
+    <tr><td>POST</td><td><code>/api/logout/</code></td><td>Autenticado</td><td>Invalidar refresh token.</td></tr>
+    <tr><td>GET</td><td><code>/api/tareas/</code></td><td>Autenticado</td><td>Listar tareas.</td></tr>
+    <tr><td>POST</td><td><code>/api/tareas/</code></td><td>Autenticado</td><td>Crear tarea.</td></tr>
+    <tr><td>GET/PUT/PATCH/DELETE</td><td><code>/api/tareas/&lt;id&gt;/</code></td><td>Autenticado</td><td>Detalle y gestión.</td></tr>
+    <tr><td>GET</td><td><code>/api/admin/usuarios/</code></td><td>Administrador</td><td>Listar usuarios.</td></tr>
+    <tr><td>PATCH</td><td><code>/api/admin/usuarios/&lt;id&gt;/</code></td><td>Administrador</td><td>Cambiar rol o estado.</td></tr>
+  </tbody>
+</table>
+
+<h3>3.5 Funcionalidades implementadas</h3>
+<ul>
+  <li><strong>Registro con validación:</strong> se exige una contraseña de al menos 8 caracteres, se aplican los validadores de Django y se confirma con <code>password2</code>. El rol enviado por el cliente se ignora y siempre se asigna <code>usuario</code>.</li>
+  <li><strong>Login con JWT:</strong> el serializador personalizado devuelve <code>access</code>, <code>refresh</code> y los datos básicos del usuario.</li>
+  <li><strong>Perfil:</strong> el usuario autenticado consulta sus propios datos.</li>
+  <li><strong>Logout real:</strong> se envía el refresh token a <code>/api/logout/</code> para incluirlo en la lista negra y luego se limpia el almacenamiento local.</li>
+  <li><strong>CRUD de tareas:</strong> creación, listado, consulta, edición, marcado como completada y eliminación.</li>
+  <li><strong>Permisos por propietario:</strong> un usuario normal solo accede a sus tareas; si intenta acceder a una ajena recibe <code>404</code>.</li>
+  <li><strong>Panel de administración:</strong> listado de usuarios con rol, estado y última conexión; cambio de rol y activación/desactivación.</li>
+  <li><strong>Gestión administrativa de tareas:</strong> el administrador ve todas las tareas con su propietario, puede crear tareas para otros usuarios, completarlas y eliminarlas, pero no editar su título ni descripción.</li>
+  <li><strong>Refresco automático del token:</strong> si el access token expira, se renueva con el refresh token y se reintenta la petición.</li>
+  <li><strong>Pruebas automatizadas:</strong> 16 pruebas que cubren autenticación, permisos, visibilidad y gestión de tareas.</li>
+</ul>
+
+<h3>3.6 Herramientas de inteligencia artificial utilizadas</h3>
+<p>Se utilizó <strong>OpenCode</strong>, un agente de código integrado en el entorno de desarrollo, con un modelo de lenguaje de la familia <strong>Big Pickle</strong>. A diferencia de un autocompletado tradicional, el agente puede leer archivos del repositorio, proponer cambios en varios archivos, ejecutar comandos y analizar los resultados de las pruebas.</p>
+
+<p>Las capacidades utilizadas fueron:</p>
+<ul>
+  <li>Lectura y análisis del proyecto completo.</li>
+  <li>Edición de archivos Python, HTML y JavaScript.</li>
+  <li>Ejecución de <code>manage.py check</code>, <code>makemigrations</code>, <code>manage.py test</code> y <code>node --check</code>.</li>
+  <li>Explicación de errores y propuesta de correcciones.</li>
+  <li>Generación de pruebas automatizadas.</li>
+  <li>Modo de planificación para discutir un cambio antes de escribir código.</li>
+</ul>
+
+<h3>3.7 Forma en que se utilizaron los prompts</h3>
+<p>Los prompts se redactaron en español y siguieron una estructura incremental:</p>
+<ol>
+  <li><strong>Contexto:</strong> indicar el framework, los archivos involucrados y el comportamiento actual.</li>
+  <li><strong>Objetivo:</strong> describir el resultado esperado.</li>
+  <li><strong>Restricciones:</strong> aclarar qué no debía modificarse (por ejemplo, mantener la simplicidad o no tocar la configuración de desarrollo).</li>
+  <li><strong>Criterio de aceptación:</strong> definir cómo se comprobaría el resultado.</li>
+  <li><strong>Verificación:</strong> pedir explícitamente que se ejecutaran las comprobaciones y las pruebas.</li>
+</ol>
+
+<p>También se utilizó el <strong>modo Plan</strong> del agente para analizar alternativas antes de modificar archivos. Esto permitió acordar el alcance con el grupo y evitar cambios innecesarios. Cuando una propuesta crecía demasiado, se ajustó el prompt para reducir el alcance, por ejemplo: «la idea es dejarlo sencillo y entendible».</p>
+
+<h3>3.8 Ejemplos de prompts utilizados</h3>
+<table>
+  <thead><tr><th>Prompt</th><th>Intención</th><th>Resultado</th></tr></thead>
+  <tbody>
+    <tr><td>«El punto 1 lo hice, verificalo, y hazme el punto 3, 4, 5, 6 y 7»</td><td>Verificar un cambio previo e implementar varias mejoras.</td><td>Validación de contraseñas, logout con blacklist, corrección de XSS, refresco de JWT y protección del administrador.</td></tr>
+    <tr><td>«Ahora mismo hay un problema que la api /api/admin/usuarios no manda el is_active»</td><td>Diagnosticar un dato faltante en la API.</td><td>Se detectó que la vista reutilizaba <code>UsuarioPerfilSerializer</code> y se creó <code>AdminUsuarioListSerializer</code>.</td></tr>
+    <tr><td>«Necesito que el form crear una tarea no solo sea para el mismo, sino que puede crear tareas para otros usuarios»</td><td>Ampliar la creación de tareas al administrador.</td><td>Se agregó el selector de usuarios y la validación de <code>usuario_id</code> en el backend.</td></tr>
+    <tr><td>«La idea es dejarlo sencillo y entendible, ¿es posible que el admin pueda crear solo tareas para los demás usuarios, sin editar ni eliminar?»</td><td>Reducir el alcance de una propuesta.</td><td>Se simplificó el diseño y se separaron las responsabilidades.</td></tr>
+    <tr><td>«También necesito que las pueda completar, las tareas ajenas»</td><td>Permitir al administrador cambiar el estado de tareas ajenas.</td><td>Se habilitó <code>PATCH</code> con el campo <code>completada</code> y se bloqueó la edición del resto de los campos.</td></tr>
+    <tr><td>«El html que tenga una sección exclusiva está bien, ¿no hay problema de seguridad con eso?»</td><td>Revisar si ocultar HTML era suficiente.</td><td>Se explicó que la seguridad depende del backend y se verificó el <code>403</code> para usuarios normales.</td></tr>
+    <tr><td>«El punto 2 lo dejo así, porque es un trabajo de universidad y no irá a producción»</td><td>Documentar una decisión consciente.</td><td>Se mantuvieron <code>DEBUG=True</code>, la <code>SECRET_KEY</code> y el usuario <code>admin/admin</code> como configuración académica.</td></tr>
+  </tbody>
+</table>
+
+<h3>3.9 Código o funcionalidades generadas con apoyo de IA</h3>
+<p>La IA generó borradores de varios fragmentos. Todos fueron revisados y adaptados por el grupo. Algunos ejemplos representativos:</p>
+
+<p><strong>Validación de contraseñas en el registro:</strong></p>
+<pre>def validate(self, attrs):
+    password = attrs.get('password')
+    password2 = attrs.pop('password2', None)
+
+    if password != password2:
+        raise serializers.ValidationError(
+            {'password2': 'Las contraseñas no coinciden.'}
+        )
+
+    usuario_temporal = User(
+        username=attrs.get('username', ''),
+        email=attrs.get('email', ''),
+    )
+    try:
+        validate_password(password, user=usuario_temporal)
+    except DjangoValidationError as exc:
+        raise serializers.ValidationError(
+            {'password': list(exc.messages)}
+        ) from exc
+
+    return attrs</pre>
+
+<p><strong>Propietario de solo lectura en las tareas:</strong></p>
+<pre>class TareaSerializer(serializers.ModelSerializer):
+    usuario_id = serializers.IntegerField(source='usuario.id', read_only=True)
+    usuario_username = serializers.CharField(
+        source='usuario.username', read_only=True
+    )
+
+    class Meta:
+        model = Tarea
+        fields = [
+            'id', 'titulo', 'descripcion', 'completada',
+            'usuario_id', 'usuario_username',
+            'fecha_creacion', 'fecha_actualizacion',
+        ]</pre>
+
+<p><strong>Asignación de tareas a otros usuarios, validada en el backend:</strong></p>
+<pre>if 'usuario_id' in datos:
+    if not _es_administrador(request.user):
+        return Response(
+            {'usuario_id': [
+                'Solo un administrador puede asignar tareas a otros usuarios.'
+            ]},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    usuario_destino = get_object_or_404(
+        User, pk=int(datos.pop('usuario_id')), is_active=True
+    )</pre>
+
+<p><strong>Permisos del administrador sobre tareas ajenas:</strong></p>
+<pre>if request.method in ('PUT', 'PATCH') and tarea.usuario_id != request.user.id:
+    if not _es_administrador(request.user):
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
+    campos_no_permitidos = set(request.data) - {'completada'}
+    if campos_no_permitidos:
+        return Response(
+            {'detail': 'Solo puedes cambiar el estado de completada.'},
+            status=status.HTTP_403_FORBIDDEN,
+        )</pre>
+
+<p><strong>Refresco automático del token en el frontend:</strong></p>
+<pre>if (response.status === 401 &amp;&amp; reintentar) {
+  const nuevoAccess = await refreshAccessToken();
+
+  if (nuevoAccess) {
+    return apiFetch(url, options, false);
+  }
+
+  clearSession();
+  redirectToLogin();
+}</pre>
+
+<p>La IA también generó el esqueleto de las 16 pruebas automatizadas, que luego se ejecutaron y ajustaron hasta obtener un resultado exitoso.</p>
+
+<h3>3.10 Modificaciones realizadas por el grupo</h3>
+<p>El grupo no aceptó el código de forma automática. Se realizaron las siguientes modificaciones y decisiones:</p>
+<ul>
+  <li>Se verificó que el registro ignorara el rol enviado por el cliente y se eliminó un <code>return</code> inalcanzable.</li>
+  <li>Se decidió que el administrador <strong>vea todas las tareas</strong>, pero que solo pueda <strong>editar las propias</strong>. Para las ajenas puede cambiar el estado de completada y eliminarlas.</li>
+  <li>Se descartó una propuesta inicial más amplia (gestión total de tareas ajenas) para mantener el proyecto comprensible.</li>
+  <li>Se corrigió la línea redundante que impedía que el administrador accediera a tareas ajenas.</li>
+  <li>Se cambió <code>ListCreateAPIView</code> por <code>ListAPIView</code> en la gestión de usuarios, para evitar la creación de cuentas sin contraseña.</li>
+  <li>Se corrigió <code>STATIC_URL</code> y se centralizó la lógica de autenticación en <code>api.js</code>.</li>
+  <li>Se cambió <code>LANGUAGE_CODE</code> a <code>es</code> para que los mensajes de validación se mostraran en español.</li>
+  <li>Se mantuvo la configuración de desarrollo (<code>DEBUG=True</code>, <code>SECRET_KEY</code> fija y usuario <code>admin/admin</code>) por tratarse de un trabajo académico, dejando constancia de la limitación.</li>
+</ul>
+
+<h3>3.11 Problemas detectados en el código generado</h3>
+<table>
+  <thead><tr><th>Problema</th><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead>
+  <tbody>
+    <tr><td><code>is_active</code> ausente</td><td>Todos los usuarios aparecían como «Desactivado».</td><td>El listado reutilizaba <code>UsuarioPerfilSerializer</code>, que no incluía el campo.</td><td>Se creó <code>AdminUsuarioListSerializer</code> y se usó en la vista.</td></tr>
+    <tr><td>Riesgo de XSS</td><td>Datos del servidor insertados con <code>innerHTML</code>.</td><td>Concatenación de HTML con valores dinámicos.</td><td>Se reemplazó por <code>createElement</code> y <code>textContent</code>.</td></tr>
+    <tr><td>Creación de usuarios sin contraseña</td><td><code>POST /api/admin/usuarios/</code> devolvía <code>405</code> o permitía datos incompletos.</td><td>La vista heredaba de <code>ListCreateAPIView</code>.</td><td>Se cambió a <code>ListAPIView</code>.</td></tr>
+    <tr><td><code>return</code> inalcanzable</td><td>Código muerto en <code>RegistroSerializer</code>.</td><td>Se dejó un <code>return</code> después de otro.</td><td>Se eliminó.</td></tr>
+    <tr><td><code>STATIC_URL</code> relativa</td><td>El archivo <code>api.js</code> no se resolvía correctamente.</td><td><code>STATIC_URL = 'static/'</code> sin barra inicial.</td><td>Se cambió a <code>/static/</code>.</td></tr>
+    <tr><td>Rol por defecto incorrecto</td><td>El login devolvía <code>"cliente"</code> si faltaba el rol.</td><td>Valor de respaldo heredado.</td><td>Se cambió a <code>"usuario"</code>.</td></tr>
+    <tr><td>Administrador bloqueado</td><td>El admin recibía <code>404</code> en tareas ajenas.</td><td>Un <code>get_object_or_404</code> previo filtraba por propietario antes de la comprobación de rol.</td><td>Se eliminó la línea redundante.</td></tr>
+    <tr><td>Condición de carrera en el frontend</td><td>Los botones no aparecían al cargar la lista.</td><td><code>cargarTareas()</code> se ejecutaba antes de conocer el <code>currentUserId</code>.</td><td>Se encadenaron las llamadas de forma secuencial.</td></tr>
+    <tr><td>Ausencia de pruebas</td><td><code>manage.py test</code> encontraba 0 tests.</td><td>No se habían creado pruebas.</td><td>Se agregaron 16 pruebas.</td></tr>
+    <tr><td>Sin soporte de <code>PATCH</code></td><td>El frontend no podía actualizar parcialmente una tarea.</td><td>La vista solo aceptaba <code>PUT</code>.</td><td>Se añadió <code>PATCH</code>.</td></tr>
+  </tbody>
+</table>
+
+<h3>3.12 Medidas de seguridad implementadas</h3>
+<ul>
+  <li><strong>Contraseñas:</strong> se utiliza el hash de Django, validadores de <code>AUTH_PASSWORD_VALIDATORS</code>, longitud mínima de 8 caracteres y confirmación mediante <code>password2</code>.</li>
+  <li><strong>JWT:</strong> access token de 15 minutos, refresh token de 1 día, rotación de refresh y lista negra tras la rotación. El logout invalida el refresh token.</li>
+  <li><strong>Autorización en el backend:</strong> el permiso <code>EsAdministrador</code> protege los endpoints de administración. La seguridad no depende de ocultar HTML.</li>
+  <li><strong>Propiedad de los recursos:</strong> las tareas se filtran por <code>usuario=request.user</code> para los usuarios normales. Las tareas ajenas devuelven <code>404</code> para no revelar su existencia.</li>
+  <li><strong>Rol no escribible:</strong> el registro ignora cualquier <code>rol</code> enviado por el cliente y fuerza <code>usuario</code>.</li>
+  <li><strong>Protección del administrador:</strong> no puede cambiarse el propio rol ni desactivar su cuenta, y el sistema impide quedarse sin al menos un administrador activo.</li>
+  <li><strong>Reasignación bloqueada:</strong> <code>usuario</code> no es un campo escribible del serializador; un <code>PATCH</code> no puede cambiar el propietario.</li>
+  <li><strong>XSS:</strong> el frontend construye el DOM con <code>createElement</code> y <code>textContent</code>, sin interpolar datos del servidor en <code>innerHTML</code>.</li>
+  <li><strong>Asignación de tareas:</strong> solo un administrador puede enviar <code>usuario_id</code>; un usuario normal recibe <code>403</code>.</li>
+</ul>
+
+<div class="nota">
+  <strong>Limitaciones asumidas:</strong> al ser un trabajo académico que no se despliega en producción, se mantuvieron <code>DEBUG=True</code>, una <code>SECRET_KEY</code> fija y el usuario <code>admin/admin</code>. En un entorno real se usarían variables de entorno, <code>DEBUG=False</code>, HTTPS, <code>createsuperuser</code> y una base de datos como PostgreSQL.
+</div>
+
+<h3>3.13 Capturas de pantalla</h3>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 1. Pantalla de inicio de sesión.</span>
+  <span class="figura-nota">Cómo obtenerla: ejecutar <code>python manage.py runserver</code>, abrir <code>http://localhost:8000/</code> y capturar la pantalla completa.</span>
+</div>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 2. Registro con validación de contraseña.</span>
+  <span class="figura-nota">Cómo obtenerla: abrir <code>/registro/</code>, ingresar una contraseña débil y capturar el mensaje de error.</span>
+</div>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 3. Lista de tareas de un usuario normal.</span>
+  <span class="figura-nota">Cómo obtenerla: iniciar sesión con un usuario común y capturar la lista con sus tareas.</span>
+</div>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 4. Panel de administración y selector «Asignar a».</span>
+  <span class="figura-nota">Cómo obtenerla: iniciar sesión como administrador y capturar el panel junto con el formulario de creación.</span>
+</div>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 5. Administrador viendo tareas ajenas.</span>
+  <span class="figura-nota">Cómo obtenerla: crear una tarea para otro usuario y capturar la etiqueta «Propietario» y los botones disponibles.</span>
+</div>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 6. Perfil del usuario autenticado.</span>
+  <span class="figura-nota">Cómo obtenerla: abrir «Mi Perfil» y capturar los datos mostrados.</span>
+</div>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 7. Pruebas automatizadas en ejecución.</span>
+  <span class="figura-nota">Cómo obtenerla: ejecutar <code>python manage.py test</code> y capturar la terminal con el resultado <code>Ran 16 tests ... OK</code>.</span>
+</div>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 8. Interacción con la herramienta de IA.</span>
+  <span class="figura-nota">Cómo obtenerla: capturar el chat del agente mostrando un prompt del informe y la respuesta generada.</span>
+</div>
+
+<div class="figura">
+  <span class="figura-titulo">Figura 9. Código generado y revisado.</span>
+  <span class="figura-nota">Cómo obtenerla: capturar el diff o el fragmento final de <code>detalle_tarea</code> o <code>TareaSerializer</code>.</span>
+</div>
+
+<!-- ================= 4. CONCLUSIÓN ================= -->
+<h2 class="salto">4. Conclusión</h2>
+
+<p>El desarrollo permitió obtener una aplicación funcional que cubre los requisitos planteados: registro y autenticación con JWT, gestión de tareas con permisos por propietario, panel de administración y gestión de tareas ajenas por parte del administrador. La incorporación de 16 pruebas automatizadas permitió verificar el comportamiento de los endpoints y detectar regresiones durante los cambios.</p>
+
+<p>El uso de inteligencia artificial aportó velocidad en tareas como el análisis del repositorio, la generación de borradores de código y la escritura de pruebas. Sin embargo, también evidenció que el código generado debe revisarse con criterio: aparecieron problemas como un campo faltante en un serializador, una línea redundante que bloqueaba al administrador, riesgos de XSS y una condición de carrera en el frontend. Ninguno de esos problemas se habría detectado solo leyendo el código de forma superficial; fue necesario ejecutar comprobaciones y pruebas.</p>
+
+<p>Las principales dificultades estuvieron relacionadas con el alcance del proyecto y con la matriz de permisos. Fue necesario acordar qué podía hacer cada rol sobre cada recurso y ajustar el backend para que esa lógica no dependiera del frontend. También fue importante distinguir entre «editar» una tarea y «cambiar su estado», ya que el administrador debía poder completar tareas ajenas sin modificar su contenido.</p>
+
+<p>Los aprendizajes más relevantes fueron:</p>
+<ul>
+  <li>La IA acelera el desarrollo, pero no reemplaza la revisión técnica ni las pruebas.</li>
+  <li>Los prompts funcionan mejor cuando incluyen contexto, restricciones y criterios de aceptación.</li>
+  <li>La seguridad debe implementarse en el backend; ocultar elementos en el HTML no es un control de acceso.</li>
+  <li>Las pruebas automatizadas son la mejor red de seguridad frente a cambios generados por IA.</li>
+  <li>Documentar las decisiones y las limitaciones es parte del trabajo, especialmente cuando se opta por una configuración académica en lugar de una de producción.</li>
+</ul>
+
+<!-- ================= 5. REFERENCIAS ================= -->
+<h2>5. Referencias</h2>
+<ul>
+  <li>Django Software Foundation. <em>Django Documentation</em>. https://docs.djangoproject.com/</li>
+  <li>Encode OSS Ltd. <em>Django REST Framework Documentation</em>. https://www.django-rest-framework.org/</li>
+  <li>Jazzband. <em>djangorestframework-simplejwt Documentation</em>. https://django-rest-framework-simplejwt.readthedocs.io/</li>
+  <li>OWASP Foundation. <em>OWASP Top 10</em>. https://owasp.org/www-project-top-ten/</li>
+  <li>Mozilla Developer Network. <em>Fetch API</em>. https://developer.mozilla.org/es/docs/Web/API/Fetch_API</li>
+</ul>
+
+</body>
+</html>
